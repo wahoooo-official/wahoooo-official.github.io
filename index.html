@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+
+<script>
+window.OneSignal = window.OneSignal || [];
+OneSignal.push(function() {
+  OneSignal.init({
+    appId: "301c63d6-4953-4b15-9c60-8b20114bad35",
+    path: "/Wahoooo-Site/",
+    serviceWorkerPath: "/Wahoooo-Site/OneSignalSDKWorker.js"
+  });
+});
+</script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Wahoooo!™ - Sito Ufficiale</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+
+  <style>
+    body {
+      font-family: "Trebuchet MS", sans-serif;
+      background: url("Sfondo.svg") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #ff9f00;
+      color: white;
+      text-align: center;
+      padding: 40px 10px;
+      font-size: 32px;
+      font-weight: bold;
+      border-bottom: 5px solid #e08600;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+    }
+
+    h2 {
+      color: #ff9f00;
+      font-size: 26px;
+      border-left: 8px solid #ff9f00;
+      padding-left: 10px;
+      margin-top: 30px;
+    }
+
+    .link-box {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+      font-size: 20px;
+    }
+
+    a {
+      color: #0077ff;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      header { font-size: 24px; padding: 25px 10px; }
+      .container { margin: 10px; padding: 15px; }
+      h2 { font-size: 22px; }
+      .link-box { font-size: 18px; }
+    }
+
+    @media (max-width: 480px) {
+      header { font-size: 20px; }
+      .link-box { font-size: 16px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  Benvenuto nel sito della Wahoooo!™
+</header>
+
+<div class="container">
+
+  <h2>Account ufficiale Wahoooo!™</h2>
+  <div class="link-box">
+    🔗 <a href="https://scratch.mit.edu/users/Wahoooo_Official/" target="_blank">
+      Visita il profilo ufficiale su Scratch
+    </a>
+  </div>
+
+  <div class="link-box">
+    🔗 <a href="https://scratch.mit.edu/discuss/topic/822881/" target="_blank">
+      Visita il forum ufficiale su Scratch
+    </a>
+  </div>
+
+  <h2>Progetti in primo piano</h2>
+  <iframe
+    src="https://scratch.mit.edu/projects/1240115972/embed"
+    allowtransparency="true"
+    width="485"
+    height="402"
+    frameborder="0"
+    scrolling="no"
+    allowfullscreen>
+  </iframe>
+
+  <h2>📰 Notizie</h2>
+  <div id="news"></div>
+
+  <h2>Team Wahoooo!™</h2>
+  <div class="link-box">Emotional – <a href="https://scratch.mit.edu/users/An_Emotional_Studio/" target="_blank">Profilo</a></div>
+  <div class="link-box">Leototaltube_14 – <a href="https://scratch.mit.edu/users/Leototaltube_14/" target="_blank">Profilo</a></div>
+  <div class="link-box">Gretuzza – Doppiatrice</div>
+  <div class="link-box">Gab-rix-14 – Doppiatore</div>
+  <div class="link-box">SuperMartino11 – <a href="https://scratch.mit.edu/users/supermartino11/" target="_blank">Profilo</a></div>
+
+  <h2>Storia della Wahoooo!™</h2>
+  <div class="link-box">
+    Nel 31 Marzo del 2024, un ragazzo di nome Leonardo si iscrisse a Scratch sotto il nome di Leototaltube_14.
+    Nel 7 ottobre del 2024 pubblicò il primo bumper della Wahoooo e nel febbraio dell'anno dopo lanciò
+    Doggie and Friends. Così iniziò la storia di un piccolo studio nato su Scratch.
+  </div>
+
+</div>
+
+<!-- 🟡 SCRIPT GOOGLE SHEETS -->
+<script>
+const SHEET_ID = "1ocHbBi3wnbGLHheHxqLx-CNYgOaXeaR5OFH0zMEipAo";
+const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+fetch(URL)
+  .then(res => res.text())
+  .then(text => {
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const rows = json.table.rows;
+    const container = document.getElementById("news");
+    container.innerHTML = "";
+
+    if (!rows || rows.length === 0) {
+      container.innerHTML =
+        "<div class='link-box'>Nessuna notizia disponibile.</div>";
+      return;
+    }
+
+    rows.slice(1).reverse().forEach(row => {
+      const titolo = row.c[0]?.v || "";
+      const data   = row.c[1]?.v || "";
+      const testo  = row.c[2]?.v || "";
+
+      const box = document.createElement("div");
+      box.className = "link-box";
+      box.innerHTML = `
+        <strong>${titolo}</strong><br>
+        <small>${data}</small><br><br>
+        ${testo}
+      `;
+      container.appendChild(box);
+    });
+  })
+  .catch(() => {
+    document.getElementById("news").innerHTML =
+      "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
+  });
+</script>
+
+</body>
+</html>
