@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  
-<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
-<script>
-  window.OneSignal = window.OneSignal || [];
-  OneSignal.push(function() {
-    OneSignal.init({
-      appId: "301c63d6-4953-4b15-9c60-8b20114bad35"
+
+  <!-- 🔔 OneSignal -->
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+  <script>
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+      OneSignal.init({
+        appId: "301c63d6-4953-4b15-9c60-8b20114bad35"
+      });
     });
-  });
-</script>
+  </script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Wahoooo!™ - Sito Ufficiale</title>
 
   <!-- Favicon -->
   <link rel="icon" href="favicon/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
   <style>
     body {
@@ -142,44 +142,44 @@
 
 </div>
 
-<!-- 🟡 SCRIPT GOOGLE SHEETS -->
+<!-- 📰 SCRIPT NOTIZIE (Google Sheets) -->
 <script>
-const SHEET_ID = "1ocHbBi3wnbGLHheHxqLx-CNYgOaXeaR5OFH0zMEipAo";
-const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+  const SHEET_ID = "1ocHbBi3wnbGLHheHxqLx-CNYgOaXeaR5OFH0zMEipAo";
+  const sheetURL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-fetch(URL)
-  .then(res => res.text())
-  .then(text => {
-    const json = JSON.parse(text.substring(47).slice(0, -2));
-    const rows = json.table.rows;
-    const container = document.getElementById("news");
-    container.innerHTML = "";
+  fetch(sheetURL)
+    .then(res => res.text())
+    .then(text => {
+      const json = JSON.parse(text.substring(47).slice(0, -2));
+      const rows = json.table.rows;
+      const container = document.getElementById("news");
+      container.innerHTML = "";
 
-    if (!rows || rows.length === 0) {
-      container.innerHTML =
-        "<div class='link-box'>Nessuna notizia disponibile.</div>";
-      return;
-    }
+      if (!rows || rows.length === 0) {
+        container.innerHTML =
+          "<div class='link-box'>Nessuna notizia disponibile.</div>";
+        return;
+      }
 
-    rows.slice(1).reverse().forEach(row => {
-      const titolo = row.c[0]?.v || "";
-      const data   = row.c[1]?.v || "";
-      const testo  = row.c[2]?.v || "";
+      rows.slice(1).reverse().forEach(row => {
+        const titolo = row.c[0]?.v || "";
+        const data   = row.c[1]?.v || "";
+        const testo  = row.c[2]?.v || "";
 
-      const box = document.createElement("div");
-      box.className = "link-box";
-      box.innerHTML = `
-        <strong>${titolo}</strong><br>
-        <small>${data}</small><br><br>
-        ${testo}
-      `;
-      container.appendChild(box);
+        const box = document.createElement("div");
+        box.className = "link-box";
+        box.innerHTML = `
+          <strong>${titolo}</strong><br>
+          <small>${data}</small><br><br>
+          ${testo}
+        `;
+        container.appendChild(box);
+      });
+    })
+    .catch(() => {
+      document.getElementById("news").innerHTML =
+        "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
     });
-  })
-  .catch(() => {
-    document.getElementById("news").innerHTML =
-      "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
-  });
 </script>
 
 </body>
