@@ -3,15 +3,31 @@
 <head>
 
   <!-- 🔔 OneSignal -->
-  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
-  <script>
-    window.OneSignal = window.OneSignal || [];
-    OneSignal.push(function() {
-      OneSignal.init({
-        appId: "301c63d6-4953-4b15-9c60-8b20114bad35"
-      });
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+<script>
+  window.OneSignal = window.OneSignal || [];
+  OneSignal.push(function() {
+    OneSignal.init({
+      appId: "301c63d6-4953-4b15-9c60-8b20114bad35",
+      language: "it",
+      promptOptions: {
+        slidedown: {
+          prompts: [
+            {
+              type: "push",
+              autoPrompt: true,
+              text: {
+                actionMessage: "Attiva le notifiche per ricevere le ultime notizie e aggiornamenti.",
+                acceptButton: "Iscriviti",
+                cancelButton: "Più tardi"
+              }
+            }
+          ]
+        }
+      }
     });
-  </script>
+  });
+</script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
