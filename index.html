@@ -3,31 +3,31 @@
 <head>
 
   <!-- 🔔 OneSignal -->
-<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
-<script>
-  window.OneSignal = window.OneSignal || [];
-  OneSignal.push(function() {
-    OneSignal.init({
-      appId: "301c63d6-4953-4b15-9c60-8b20114bad35",
-      language: "it",
-      promptOptions: {
-        slidedown: {
-          prompts: [
-            {
-              type: "push",
-              autoPrompt: true,
-              text: {
-                actionMessage: "Attiva le notifiche per ricevere le ultime notizie e aggiornamenti.",
-                acceptButton: "Iscriviti",
-                cancelButton: "Più tardi"
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+  <script>
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+      OneSignal.init({
+        appId: "301c63d6-4953-4b15-9c60-8b20114bad35",
+        language: "it",
+        promptOptions: {
+          slidedown: {
+            prompts: [
+              {
+                type: "push",
+                autoPrompt: true,
+                text: {
+                  actionMessage: "Attiva le notifiche per ricevere le ultime notizie e aggiornamenti.",
+                  acceptButton: "Iscriviti",
+                  cancelButton: "Più tardi"
+                }
               }
-            }
-          ]
+            ]
+          }
         }
-      }
+      });
     });
-  });
-</script>
+  </script>
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -140,7 +140,9 @@
   </iframe>
 
   <h2>📰 Notizie</h2>
-  <div id="news"></div>
+  <div id="news">
+    <div class="link-box">Caricamento notizia…</div>
+  </div>
 
   <h2>Team Wahoooo!™</h2>
   <div class="link-box">Emotional – <a href="https://scratch.mit.edu/users/An_Emotional_Studio/" target="_blank">Profilo</a></div>
@@ -177,20 +179,21 @@
         return;
       }
 
-      rows.slice(1).reverse().forEach(row => {
-        const titolo = row.c[0]?.v || "";
-        const data   = row.c[1]?.v || "";
-        const testo  = row.c[2]?.v || "";
+      // ✅ RIGA 2 → A2, B2, C2
+      const row = rows[0];
 
-        const box = document.createElement("div");
-        box.className = "link-box";
-        box.innerHTML = `
-          <strong>${titolo}</strong><br>
-          <small>${data}</small><br><br>
-          ${testo}
-        `;
-        container.appendChild(box);
-      });
+      const titolo = row.c[0]?.v || "";
+      const data   = row.c[1]?.v || "";
+      const testo  = row.c[2]?.v || "";
+
+      const box = document.createElement("div");
+      box.className = "link-box";
+      box.innerHTML = `
+        <strong>${titolo}</strong><br>
+        <small>${data}</small><br><br>
+        ${testo}
+      `;
+      container.appendChild(box);
     })
     .catch(() => {
       document.getElementById("news").innerHTML =
