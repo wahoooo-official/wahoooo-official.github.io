@@ -4,114 +4,101 @@
 <meta charset="UTF-8">
 <title>Admin Panel</title>
 
-<!-- FAVICON -->
 <link rel="icon" type="image/png" href="favicon/favicon.png">
 
 <style>
-body {
+body{
   font-family: Trebuchet MS, sans-serif;
-  background: url("Sfondo.svg") no-repeat center center fixed;
-  background-size: cover;
-  margin: 0;
+  background:url("Sfondo.svg") no-repeat center center fixed;
+  background-size:cover;
+  margin:0;
 }
-
-header {
-  background: #ff9f00;
-  color: white;
-  text-align: center;
-  padding: 30px;
-  font-size: 28px;
-  font-weight: bold;
+header{
+  background:#ff9f00;
+  color:#fff;
+  text-align:center;
+  padding:25px;
+  font-size:26px;
+  font-weight:bold;
 }
-
-.hidden { display: none; }
+.hidden{display:none}
 
 /* LOGIN */
-.box {
-  max-width: 420px;
-  margin: 80px auto;
-  background: rgba(255,255,255,.96);
-  padding: 30px;
-  border-radius: 14px;
-  text-align: center;
+.box{
+  max-width:420px;
+  margin:80px auto;
+  background:#fff;
+  padding:30px;
+  border-radius:14px;
+  text-align:center;
 }
-
-input, button {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 15px;
+input,button{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
 }
-
-button {
-  background: #ff9f00;
-  color: white;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
+button{
+  background:#ff9f00;
+  color:white;
+  font-weight:bold;
+  border:none;
+  cursor:pointer;
 }
-button:hover { background: #e08600; }
+button:hover{background:#e08600}
 
 /* ADMIN */
-.menu {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin: 20px;
+.menu{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin:20px;
 }
-
-.menu button {
-  padding: 10px 16px;
+.container{
+  max-width:1000px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:14px;
 }
-
-.container {
-  max-width: 900px;
-  margin: auto;
-  background: rgba(255,255,255,.95);
-  padding: 20px;
-  border-radius: 14px;
-}
-
-.section { display: none; }
-.section.active { display: block; }
+.section{display:none}
+.section.active{display:block}
 
 /* CHAT */
-.chat-box {
-  height: 300px;
-  overflow-y: auto;
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px;
+.chat-box{
+  height:300px;
+  overflow-y:auto;
+  background:#f9f9f9;
+  padding:10px;
+  border-radius:10px;
+}
+.msg{font-size:14px;margin-bottom:6px}
+.msg strong{color:#ff9f00}
+.chat-input{
+  display:flex;
+  gap:6px;
+  margin-top:10px;
 }
 
-.msg { font-size: 14px; margin-bottom: 6px; }
-.msg strong { color: #ff9f00; }
-
-.chat-input {
-  display: flex;
-  gap: 6px;
-  margin-top: 10px;
+/* FLOAT CHAT */
+#chat-float{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:320px;
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 0 15px rgba(0,0,0,.3);
+  display:none;
+  flex-direction:column;
 }
-
-#chat-float {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 320px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 0 15px rgba(0,0,0,.3);
-  display: none;
-  flex-direction: column;
-}
-#chat-header {
-  background: #ff9f00;
-  color: white;
-  padding: 10px;
-  font-weight: bold;
-  cursor: pointer;
+#chat-header{
+  background:#ff9f00;
+  color:white;
+  padding:10px;
+  font-weight:bold;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -121,13 +108,13 @@ button:hover { background: #e08600; }
 <header>👑 Admin Panel</header>
 
 <!-- LOGIN -->
-<div class="box hidden" id="loginBox">
-  <h2>Accesso</h2>
+<div id="loginBox" class="box hidden">
+  <h2>Accedi / Registrati</h2>
   <input id="name" placeholder="Nome">
   <input id="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
   <button onclick="loginOrRegister()">Accedi / Registrati</button>
-  <p id="err" style="color:red;"></p>
+  <p id="err" style="color:red"></p>
 </div>
 
 <!-- ADMIN -->
@@ -140,10 +127,16 @@ button:hover { background: #e08600; }
   </div>
 
   <div class="container">
+
+    <!-- FOGLI -->
     <div id="fogli" class="section active">
-     <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGKiHRceif9TPzCotNJU-Gt8-gWDn9PoyBiWOplfjbtMXkayJ6hErOSpZJ9YWRMhipLZXS5LXEuZs0/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false"></iframe>
+      <iframe
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGKiHRceif9TPzCotNJU-Gt8-gWDn9PoyBiWOplfjbtMXkayJ6hErOSpZJ9YWRMhipLZXS5LXEuZs0/pubhtml"
+        style="width:100%; height:600px; border:none;">
+      </iframe>
     </div>
 
+    <!-- CHAT -->
     <div id="chat" class="section">
       <div id="chatMain" class="chat-box"></div>
       <div class="chat-input">
@@ -151,6 +144,7 @@ button:hover { background: #e08600; }
         <button onclick="send()">▶</button>
       </div>
     </div>
+
   </div>
 </div>
 
@@ -166,10 +160,8 @@ button:hover { background: #e08600; }
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBHNaMmfMGm-7JQLLagfImQ9L_itv7MBXg",
@@ -185,8 +177,9 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUserName = "Utente";
+let unsubscribeChat = null;
 
-/* LOGIN / REGISTER SMART */
+/* LOGIN / REGISTER */
 window.loginOrRegister = async () => {
   try {
     await signInWithEmailAndPassword(auth, email.value, password.value);
@@ -195,58 +188,62 @@ window.loginOrRegister = async () => {
   }
 };
 
-/* AUTH STATE */
-onAuthStateChanged(auth, user => {
+/* AUTH */
+onAuthStateChanged(auth, user=>{
   if(user){
     currentUserName = name.value || user.email;
     loginBox.classList.add("hidden");
     adminPanel.classList.remove("hidden");
-  } else {
+    startChat();
+  }else{
     loginBox.classList.remove("hidden");
     adminPanel.classList.add("hidden");
   }
 });
 
-/* LOGOUT */
-window.logout = async () => {
-  await signOut(auth);
-  location.reload();
-};
+/* CHAT LISTENER */
+function startChat(){
+  if(unsubscribeChat) return;
 
-/* CHAT */
-const q = query(collection(db,"chat"), orderBy("time"));
-onSnapshot(q, snap => {
-  chatMain.innerHTML = "";
-  chatFloat.innerHTML = "";
-  snap.forEach(d=>{
-    const m = d.data();
-    const html = `<div class="msg"><strong>${m.user}:</strong> ${m.text}</div>`;
-    chatMain.innerHTML += html;
-    chatFloat.innerHTML += html;
+  const q = query(collection(db,"chat"), orderBy("time"));
+  unsubscribeChat = onSnapshot(q, snap=>{
+    chatMain.innerHTML="";
+    chatFloat.innerHTML="";
+    snap.forEach(d=>{
+      const m=d.data();
+      const html=`<div class="msg"><strong>${m.user}:</strong> ${m.text}</div>`;
+      chatMain.innerHTML+=html;
+      chatFloat.innerHTML+=html;
+    });
   });
-});
+}
 
-window.send = async () => {
+/* SEND */
+window.send = async ()=>{
   const text = msgMain.value || msgFloat.value;
   if(!text) return;
 
-  await addDoc(collection(db,"chat"), {
-    user: currentUserName,
+  await addDoc(collection(db,"chat"),{
+    user:currentUserName,
     text,
-    time: serverTimestamp()
+    time:serverTimestamp()
   });
 
-  msgMain.value = "";
-  msgFloat.value = "";
+  msgMain.value="";
+  msgFloat.value="";
 };
 
 /* UI */
-window.show = id => {
+window.show=id=>{
   document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 };
-window.toggleChat = () => {
+window.toggleChat=()=>{
   chatFloat.style.display = chatFloat.style.display==="flex"?"none":"flex";
+};
+window.logout=async()=>{
+  await signOut(auth);
+  location.reload();
 };
 </script>
 
