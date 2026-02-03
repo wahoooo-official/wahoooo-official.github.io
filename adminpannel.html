@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Admin Panel</title>
+<link rel="icon" href="favicon/favicon.ico">
+
+<style>
+body {
+  font-family: Trebuchet MS, sans-serif;
+  background: url("Sfondo.svg") no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+}
+
+header {
+  background: #ff9f00;
+  color: white;
+  text-align: center;
+  padding: 35px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.box {
+  max-width: 400px;
+  margin: 80px auto;
+  background: rgba(255,255,255,.95);
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+input, button {
+  width: 90%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #ff9f00;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+button:hover { background: #e08600; }
+
+#adminPanel { display: none; padding: 20px; }
+
+.menu {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.section { display: none; }
+.section.active { display: block; }
+
+.container {
+  max-width: 900px;
+  margin: auto;
+  background: rgba(255,255,255,.95);
+  padding: 20px;
+  border-radius: 12px;
+}
+
+/* CHAT */
+#chat-box { height: 300px; overflow-y: auto; }
+.msg { font-size: 14px; margin-bottom: 5px; }
+.msg strong { color: #ff9f00; }
+
+#chat-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 320px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,0,0,.3);
+  display: none;
+  flex-direction: column;
+}
+#chat-header {
+  background: #ff9f00;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+#chat-input { display: flex; gap: 5px; padding: 10px; }
+#chat-input input { flex: 1; }
+</style>
+</head>
+
+<body>
+
+<header>👑 Admin Panel</header>
+
+<!-- LOGIN / REGISTER -->
+<div class="box" id="loginBox">
+  <h2>Accesso</h2>
+  <input id="name" placeholder="Nome completo">
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="login()">Accedi</button>
+  <button onclick="register()">Registrati</button>
+  <p id="err" style="color:red;"></p>
+</div>
+
+<!-- ADMIN -->
+<div id="adminPanel">
+  <div class="menu">
+    <button onclick="show('fogli')">📊 Fogli</button>
+    <button onclick="show('chat')">💬 Chat</button>
+    <button onclick="toggleChat()">🟢 Chat flottante</button>
+    <button id="clearBtn" onclick="clearChat()" style="display:none">🗑 Pulisci chat</button>
+  </div>
+
+  <div class="container">
+
+    <!-- GOOGLE FOGLI -->
+    <div id="fogli" class="section active">
+      <h2>Google Fogli</h2>
+      <iframe
+        src="https://docs.google.com/spreadsheets/d/e/1ocHbBi3wnbGLHheHxqLx-CNYgOaXeaR5OFH0zMEipAo/pubhtml"
+        width="100%" height="500"
+        style="border:none;border-radius:10px;">
+      </iframe>
+    </div>
+
+    <!-- CHAT -->
+    <div id="chat" class="section">
+      <h2>Chat</h2>
+      <div id="chat-box"></div>
+      <div id="chat-input">
+        <input id="msg" placeholder="Messaggio">
+        <button onclick="send()">▶</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CHAT FLOTTANTE -->
+<div id="chat-float">
+  <div id="chat-header" onclick="toggleChat()">💬 Chat</div>
+  <div id="chat-box"></div>
+  <div id="chat-input">
+    <input id="msg" placeholder="Messaggio">
+    <button onclick="send()">▶</button>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, deleteDoc, getDocs, query, orderBy, onSnapshot, serverTimestamp }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "API_KEY",
+  authDomain: "PROJECT.firebaseapp.com",
+  projectId: "PROJECT",
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUserName = "";
+
+/* AUTH */
+window.login = async () => {
+  try {
+    const email = emailInput.value;
+    const pass = passwordInput.value;
+    const name = nameInput.value;
+    await signInWithEmailAndPassword(auth, email, pass);
+    afterLogin(name);
+  } catch(e){ err.innerText = e.message; }
+};
+
+window.register = async () => {
+  try {
+    await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+    await addDoc(collection(db,"users"), {
+      name: nameInput.value,
+      email: emailInput.value
+    });
+    afterLogin(nameInput.value);
+  } catch(e){ err.innerText = e.message; }
+};
+
+function afterLogin(name){
+  currentUserName = name;
+  loginBox.style.display="none";
+  adminPanel.style.display="block";
+  if(name === "Giosuè Francesco Marraffa")
+    document.getElementById("clearBtn").style.display="inline";
+}
+
+/* CHAT */
+const q = query(collection(db,"chat"), orderBy("time"));
+onSnapshot(q, snap => {
+  document.querySelectorAll("#chat-box").forEach(b=>b.innerHTML="");
+  snap.forEach(d=>{
+    document.querySelectorAll("#chat-box").forEach(b=>{
+      b.innerHTML += `<div class="msg"><strong>${d.data().user}:</strong> ${d.data().text}</div>`;
+      b.scrollTop = b.scrollHeight;
+    });
+  });
+});
+
+window.send = async () => {
+  if(!msg.value) return;
+  await addDoc(collection(db,"chat"), {
+    user: currentUserName,
+    text: msg.value,
+    time: serverTimestamp()
+  });
+  msg.value="";
+};
+
+window.clearChat = async () => {
+  if(currentUserName !== "Giosuè Francesco Marraffa") return;
+  const docs = await getDocs(collection(db,"chat"));
+  docs.forEach(d => deleteDoc(d.ref));
+};
+
+/* UI */
+window.show = id => {
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+};
+window.toggleChat = () => {
+  chatFloat.style.display = chatFloat.style.display==="flex"?"none":"flex";
+};
+</script>
+
+<script>
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+</script>
+
+</body>
+</html>
