@@ -10,10 +10,10 @@
 /* BASE */
 body{
   font-family: Trebuchet MS, sans-serif;
-  background:url("Sfondo.svg") no-repeat center center fixed;
-  background-size:cover;
+  background:#e6e6e6; /* sfondo neutro per test */
   margin:0;
   min-height:100vh;
+  overflow-y:auto;
 }
 
 .hidden{display:none}
@@ -23,7 +23,7 @@ header{
   background:#ff9f00;
   color:#fff;
   text-align:center;
-  padding:22px;
+  padding:25px;
   font-size:26px;
   font-weight:bold;
   position:sticky;
@@ -31,23 +31,17 @@ header{
   z-index:100;
 }
 
-/* PAGE WRAPPER */
-#page{
-  min-height:calc(100vh - 80px);
-  padding:30px 0;
-}
-
 /* LOGIN */
 .box{
   max-width:420px;
-  margin:60px auto;
-  background:rgba(255,255,255,.96);
+  margin:80px auto;
+  background:#fff;
   padding:30px;
   border-radius:14px;
   text-align:center;
+  box-shadow:0 0 15px rgba(0,0,0,.2);
 }
 
-/* INPUT */
 input,button{
   width:100%;
   padding:12px;
@@ -66,26 +60,27 @@ button{
 }
 button:hover{background:#e08600}
 
-/* ADMIN */
+/* ADMIN PANEL */
 #adminPanel{
-  max-width:1400px;
-  margin:auto;
+  margin-top:30px;
+  padding-bottom:80px;
 }
 
-/* MENU */
 .menu{
   display:flex;
   justify-content:center;
-  gap:12px;
-  margin:20px 0 30px;
+  gap:10px;
+  margin:20px;
   flex-wrap:wrap;
 }
 
-/* CONTENT */
 .container{
-  background:rgba(255,255,255,.96);
-  padding:24px;
-  border-radius:16px;
+  max-width:1100px;
+  margin:20px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 0 15px rgba(0,0,0,.2);
 }
 
 /* SECTIONS */
@@ -95,18 +90,19 @@ button:hover{background:#e08600}
 /* FOGLI */
 iframe{
   width:100%;
-  height:650px;
+  height:600px;
   border:none;
-  border-radius:12px;
+  border-radius:10px;
 }
 
 /* CHAT */
 .chat-box{
-  height:420px;
+  height:300px;
   overflow-y:auto;
   background:#f9f9f9;
-  padding:12px;
+  padding:10px;
   border-radius:10px;
+  border:1px solid #ddd;
 }
 
 .msg{
@@ -117,7 +113,7 @@ iframe{
 
 .chat-input{
   display:flex;
-  gap:8px;
+  gap:6px;
   margin-top:10px;
 }
 
@@ -126,13 +122,13 @@ iframe{
   position:fixed;
   bottom:20px;
   right:20px;
-  width:340px;
+  width:320px;
   background:#fff;
   border-radius:14px;
   box-shadow:0 0 15px rgba(0,0,0,.3);
   display:none;
   flex-direction:column;
-  z-index:300;
+  z-index:200;
 }
 
 #chat-header{
@@ -143,25 +139,12 @@ iframe{
   cursor:pointer;
   border-radius:14px 14px 0 0;
 }
-
-/* DESKTOP ENHANCEMENT */
-@media (min-width: 1024px){
-  .container{
-    padding:30px;
-  }
-
-  iframe{
-    height:720px;
-  }
-}
 </style>
 </head>
 
 <body>
 
 <header>👑 Admin Panel</header>
-
-<div id="page">
 
 <!-- LOGIN -->
 <div id="loginBox" class="box hidden">
@@ -184,10 +167,14 @@ iframe{
 
   <div class="container">
 
+    <!-- FOGLI -->
     <div id="fogli" class="section active">
-      <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGKiHRceif9TPzCotNJU-Gt8-gWDn9PoyBiWOplfjbtMXkayJ6hErOSpZJ9YWRMhipLZXS5LXEuZs0/pubhtml"></iframe>
+      <iframe
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGKiHRceif9TPzCotNJU-Gt8-gWDn9PoyBiWOplfjbtMXkayJ6hErOSpZJ9YWRMhipLZXS5LXEuZs0/pubhtml">
+      </iframe>
     </div>
 
+    <!-- CHAT -->
     <div id="chat" class="section">
       <div id="chatMain" class="chat-box"></div>
       <div class="chat-input">
@@ -197,8 +184,6 @@ iframe{
     </div>
 
   </div>
-</div>
-
 </div>
 
 <!-- CHAT FLOAT -->
@@ -231,7 +216,10 @@ import {
   serverTimestamp,
   doc,
   setDoc,
-  getDoc
+  getDoc,
+  where,
+  getDocs,
+  deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -251,6 +239,7 @@ let currentUserName = "Utente";
 let currentUID = null;
 let unsubscribeChat = null;
 
+/* LOGIN / REGISTER */
 window.loginOrRegister = async () => {
   try {
     await signInWithEmailAndPassword(auth, email.value, password.value);
@@ -259,33 +248,36 @@ window.loginOrRegister = async () => {
   }
 };
 
+/* AUTH */
 onAuthStateChanged(auth, async user => {
-  if(user){
+  if (user) {
     currentUID = user.uid;
-    const ref = doc(db,"users",user.uid);
-    const snap = await getDoc(ref);
 
-    if(!snap.exists()){
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) {
       currentUserName = name.value || "Utente";
-      await setDoc(ref,{name:currentUserName});
-    }else{
+      await setDoc(userRef, { name: currentUserName });
+    } else {
       currentUserName = snap.data().name;
     }
 
     loginBox.classList.add("hidden");
     adminPanel.classList.remove("hidden");
-    show("fogli");
     startChat();
-  }else{
+  } else {
     loginBox.classList.remove("hidden");
     adminPanel.classList.add("hidden");
   }
 });
 
+/* CHAT */
 function startChat(){
-  if(unsubscribeChat) return;
-  const q = query(collection(db,"chat"),orderBy("time"));
-  unsubscribeChat = onSnapshot(q,snap=>{
+  if (unsubscribeChat) return;
+
+  const q = query(collection(db,"chat"), orderBy("time"));
+  unsubscribeChat = onSnapshot(q, snap=>{
     chatMain.innerHTML="";
     chatFloat.innerHTML="";
     snap.forEach(d=>{
@@ -297,27 +289,31 @@ function startChat(){
   });
 }
 
+/* SEND */
 window.send = async ()=>{
   const text = msgMain.value || msgFloat.value;
   if(!text) return;
+
   await addDoc(collection(db,"chat"),{
     uid:currentUID,
     user:currentUserName,
     text,
     time:serverTimestamp()
   });
+
   msgMain.value="";
   msgFloat.value="";
 };
 
-window.show = id =>{
+/* UI */
+window.show = id=>{
   document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 };
 
 window.toggleChat = ()=>{
   chatFloat.style.display =
-    chatFloat.style.display==="flex"?"none":"flex";
+    chatFloat.style.display==="flex" ? "none" : "flex";
 };
 
 window.logout = async ()=>{
