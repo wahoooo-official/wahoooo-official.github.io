@@ -160,8 +160,29 @@ button:hover{background:#e08600}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  serverTimestamp,
+  doc,
+  setDoc,
+  getDoc,
+  where,
+  getDocs,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBHNaMmfMGm-7JQLLagfImQ9L_itv7MBXg",
@@ -177,6 +198,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUserName = "Utente";
+let currentUID = null;
 let unsubscribeChat = null;
 
 /* LOGIN / REGISTER */
@@ -189,59 +211,88 @@ window.loginOrRegister = async () => {
 };
 
 /* AUTH */
-onAuthStateChanged(auth, user=>{
-  if(user){
-    currentUserName = name.value || user.email;
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    currentUID = user.uid;
+
+    const userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
+
+    if (!snap.exists()) {
+      currentUserName = name.value || "Utente";
+      await setDoc(userRef, { name: currentUserName });
+    } else {
+      currentUserName = snap.data().name;
+    }
+
     loginBox.classList.add("hidden");
     adminPanel.classList.remove("hidden");
     startChat();
-  }else{
+  } else {
     loginBox.classList.remove("hidden");
     adminPanel.classList.add("hidden");
   }
 });
 
 /* CHAT LISTENER */
-function startChat(){
-  if(unsubscribeChat) return;
+function startChat() {
+  if (unsubscribeChat) return;
 
-  const q = query(collection(db,"chat"), orderBy("time"));
-  unsubscribeChat = onSnapshot(q, snap=>{
-    chatMain.innerHTML="";
-    chatFloat.innerHTML="";
-    snap.forEach(d=>{
-      const m=d.data();
-      const html=`<div class="msg"><strong>${m.user}:</strong> ${m.text}</div>`;
-      chatMain.innerHTML+=html;
-      chatFloat.innerHTML+=html;
+  const q = query(collection(db, "chat"), orderBy("time"));
+  unsubscribeChat = onSnapshot(q, snap => {
+    chatMain.innerHTML = "";
+    chatFloat.innerHTML = "";
+
+    snap.forEach(d => {
+      const m = d.data();
+      const html = `<div class="msg"><strong>${m.user}:</strong> ${m.text}</div>`;
+      chatMain.innerHTML += html;
+      chatFloat.innerHTML += html;
     });
   });
 }
 
 /* SEND */
-window.send = async ()=>{
+window.send = async () => {
   const text = msgMain.value || msgFloat.value;
-  if(!text) return;
+  if (!text) return;
 
-  await addDoc(collection(db,"chat"),{
-    user:currentUserName,
+  await addDoc(collection(db, "chat"), {
+    uid: currentUID,
+    user: currentUserName,
     text,
-    time:serverTimestamp()
+    time: serverTimestamp()
   });
 
-  msgMain.value="";
-  msgFloat.value="";
+  msgMain.value = "";
+  msgFloat.value = "";
+};
+
+/* SVUOTA SOLO LA MIA CHAT */
+window.clearMyChat = async () => {
+  if (!confirm("Vuoi cancellare SOLO i tuoi messaggi?")) return;
+
+  const q = query(
+    collection(db, "chat"),
+    where("uid", "==", currentUID)
+  );
+
+  const snap = await getDocs(q);
+  snap.forEach(d => deleteDoc(d.ref));
 };
 
 /* UI */
-window.show=id=>{
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+window.show = id => {
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 };
-window.toggleChat=()=>{
-  chatFloat.style.display = chatFloat.style.display==="flex"?"none":"flex";
+
+window.toggleChat = () => {
+  chatFloat.style.display =
+    chatFloat.style.display === "flex" ? "none" : "flex";
 };
-window.logout=async()=>{
+
+window.logout = async () => {
   await signOut(auth);
   location.reload();
 };
