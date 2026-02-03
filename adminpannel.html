@@ -12,7 +12,6 @@ body {
   background-size: cover;
   margin: 0;
 }
-
 header {
   background: #ff9f00;
   color: white;
@@ -21,7 +20,6 @@ header {
   font-size: 30px;
   font-weight: bold;
 }
-
 .box {
   max-width: 420px;
   margin: 80px auto;
@@ -30,7 +28,6 @@ header {
   border-radius: 12px;
   text-align: center;
 }
-
 input, button {
   width: 90%;
   padding: 10px;
@@ -38,7 +35,6 @@ input, button {
   border-radius: 8px;
   border: 1px solid #ccc;
 }
-
 button {
   background: #ff9f00;
   color: white;
@@ -69,7 +65,6 @@ button:hover { background: #e08600; }
   border-radius: 12px;
 }
 
-/* CHAT */
 .chat-box {
   height: 300px;
   overflow-y: auto;
@@ -119,6 +114,7 @@ button:hover { background: #e08600; }
   <input id="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
   <button onclick="login()">Accedi</button>
+  <button onclick="register()">Registrati</button>
   <p id="err" style="color:red;"></p>
 </div>
 
@@ -133,7 +129,6 @@ button:hover { background: #e08600; }
 
   <div class="container">
 
-    <!-- GOOGLE FOGLI -->
     <div id="fogli" class="section active">
       <h2>Google Fogli</h2>
       <iframe
@@ -143,12 +138,11 @@ button:hover { background: #e08600; }
       </iframe>
     </div>
 
-    <!-- CHAT -->
     <div id="chat" class="section">
       <h2>Chat</h2>
-      <div id="chatBoxMain" class="chat-box"></div>
+      <div id="chat-box-main" class="chat-box"></div>
       <div class="chat-input">
-        <input id="msgMain" placeholder="Messaggio">
+        <input id="msg-main" placeholder="Messaggio">
         <button onclick="send('main')">▶</button>
       </div>
       <p id="online"></p>
@@ -160,9 +154,9 @@ button:hover { background: #e08600; }
 <!-- CHAT FLOTTANTE -->
 <div id="chat-float">
   <div id="chat-header" onclick="toggleChat()">💬 Chat</div>
-  <div id="chatBoxFloat" class="chat-box"></div>
+  <div id="chat-box-float" class="chat-box"></div>
   <div class="chat-input">
-    <input id="msgFloat" placeholder="Messaggio">
+    <input id="msg-float" placeholder="Messaggio">
     <button onclick="send('float')">▶</button>
   </div>
 </div>
@@ -170,15 +164,13 @@ button:hover { background: #e08600; }
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } 
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, deleteDoc, getDocs, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc } 
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* 🔐 ADMIN UID */
 const ADMIN_UID = "xo4cSYmbfzUKpLfz290x0DjhsCq1";
 
-/* CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyBHNaMmfMGm-7JQLLagfImQ9L_itv7MBXg",
   authDomain: "wahoooo-adminpannel.firebaseapp.com",
@@ -192,50 +184,62 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* INPUT */
+/* DOM */
 const nameInput = document.getElementById("name");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const err = document.getElementById("err");
+const loginBox = document.getElementById("loginBox");
+const adminPanel = document.getElementById("adminPanel");
+const clearBtn = document.getElementById("clearBtn");
+const chatBoxMain = document.getElementById("chat-box-main");
+const chatBoxFloat = document.getElementById("chat-box-float");
+const msgMain = document.getElementById("msg-main");
+const msgFloat = document.getElementById("msg-float");
+const chatFloat = document.getElementById("chat-float");
+const online = document.getElementById("online");
 
 let currentUser = null;
 let lastMsgTime = 0;
 
-/* LOGIN */
+/* AUTH */
 window.login = async () => {
   try {
-    await signInWithEmailAndPassword(
-      auth,
-      emailInput.value,
-      passwordInput.value
-    );
-  } catch(e) {
+    await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+  } catch (e) {
+    err.innerText = e.message;
+  }
+};
+
+window.register = async () => {
+  try {
+    await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+  } catch (e) {
     err.innerText = e.message;
   }
 };
 
 onAuthStateChanged(auth, async user => {
-  if(!user) return;
+  if (!user) return;
   currentUser = user;
 
-  await setDoc(doc(db,"online",user.uid), {
+  await setDoc(doc(db, "online", user.uid), {
     name: nameInput.value || "Utente",
     time: serverTimestamp()
   });
 
-  loginBox.style.display="none";
-  adminPanel.style.display="block";
+  loginBox.style.display = "none";
+  adminPanel.style.display = "block";
 
-  if(user.uid === ADMIN_UID)
-    clearBtn.style.display="inline";
+  if (user.uid === ADMIN_UID) clearBtn.style.display = "inline";
 });
 
 /* CHAT */
-const q = query(collection(db,"chat"), orderBy("time"));
+const q = query(collection(db, "chat"), orderBy("time"));
 onSnapshot(q, snap => {
   chatBoxMain.innerHTML = "";
   chatBoxFloat.innerHTML = "";
-  snap.forEach(d=>{
+  snap.forEach(d => {
     const m = d.data();
     const html = `<div class="msg"><strong>${m.user}:</strong> ${m.text}</div>`;
     chatBoxMain.innerHTML += html;
@@ -243,42 +247,40 @@ onSnapshot(q, snap => {
   });
 });
 
-/* SEND */
-window.send = async (where) => {
+window.send = async where => {
   const now = Date.now();
-  if(now - lastMsgTime < 1000) return;
+  if (now - lastMsgTime < 1000) return;
   lastMsgTime = now;
 
-  const input = where==="main" ? msgMain : msgFloat;
-  if(!input.value) return;
+  const input = where === "main" ? msgMain : msgFloat;
+  if (!input.value) return;
 
-  await addDoc(collection(db,"chat"), {
+  await addDoc(collection(db, "chat"), {
     user: nameInput.value || "Utente",
     text: input.value,
     time: serverTimestamp()
   });
-  input.value="";
+  input.value = "";
 };
 
-/* CLEAR */
 window.clearChat = async () => {
-  if(currentUser.uid !== ADMIN_UID) return;
-  const docs = await getDocs(collection(db,"chat"));
+  if (currentUser.uid !== ADMIN_UID) return;
+  const docs = await getDocs(collection(db, "chat"));
   docs.forEach(d => deleteDoc(d.ref));
 };
 
 /* ONLINE */
-onSnapshot(collection(db,"online"), snap => {
+onSnapshot(collection(db, "online"), snap => {
   online.innerText = "🟢 Online: " + snap.size;
 });
 
 /* UI */
 window.show = id => {
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
 };
 window.toggleChat = () => {
-  chatFloat.style.display = chatFloat.style.display==="flex"?"none":"flex";
+  chatFloat.style.display = chatFloat.style.display === "flex" ? "none" : "flex";
 };
 </script>
 
