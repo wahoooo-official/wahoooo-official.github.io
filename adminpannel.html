@@ -119,7 +119,6 @@ button:hover { background: #e08600; }
   <input id="email" placeholder="Email">
   <input id="password" type="password" placeholder="Password">
   <button onclick="login()">Accedi</button>
-  <button onclick="register()">Registrati</button>
   <p id="err" style="color:red;"></p>
 </div>
 
@@ -147,9 +146,9 @@ button:hover { background: #e08600; }
     <!-- CHAT -->
     <div id="chat" class="section">
       <h2>Chat</h2>
-      <div id="chat-box-main" class="chat-box"></div>
+      <div id="chatBoxMain" class="chat-box"></div>
       <div class="chat-input">
-        <input id="msg-main" placeholder="Messaggio">
+        <input id="msgMain" placeholder="Messaggio">
         <button onclick="send('main')">▶</button>
       </div>
       <p id="online"></p>
@@ -161,9 +160,9 @@ button:hover { background: #e08600; }
 <!-- CHAT FLOTTANTE -->
 <div id="chat-float">
   <div id="chat-header" onclick="toggleChat()">💬 Chat</div>
-  <div id="chat-box-float" class="chat-box"></div>
+  <div id="chatBoxFloat" class="chat-box"></div>
   <div class="chat-input">
-    <input id="msg-float" placeholder="Messaggio">
+    <input id="msgFloat" placeholder="Messaggio">
     <button onclick="send('float')">▶</button>
   </div>
 </div>
@@ -171,15 +170,15 @@ button:hover { background: #e08600; }
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } 
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, collection, addDoc, deleteDoc, getDocs, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc, deleteDoc as del }
+import { getFirestore, collection, addDoc, deleteDoc, getDocs, query, orderBy, onSnapshot, serverTimestamp, doc, setDoc } 
 from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 /* 🔐 ADMIN UID */
 const ADMIN_UID = "xo4cSYmbfzUKpLfz290x0DjhsCq1";
 
-/* CONFIG (TUO) */
+/* CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyBHNaMmfMGm-7JQLLagfImQ9L_itv7MBXg",
   authDomain: "wahoooo-adminpannel.firebaseapp.com",
@@ -193,20 +192,26 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+/* INPUT */
+const nameInput = document.getElementById("name");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const err = document.getElementById("err");
+
 let currentUser = null;
 let lastMsgTime = 0;
 
-/* AUTH */
+/* LOGIN */
 window.login = async () => {
   try {
-    await signInWithEmailAndPassword(auth, email.value, password.value);
-  } catch(e){ err.innerText = e.message; }
-};
-
-window.register = async () => {
-  try {
-    await createUserWithEmailAndPassword(auth, email.value, password.value);
-  } catch(e){ err.innerText = e.message; }
+    await signInWithEmailAndPassword(
+      auth,
+      emailInput.value,
+      passwordInput.value
+    );
+  } catch(e) {
+    err.innerText = e.message;
+  }
 };
 
 onAuthStateChanged(auth, async user => {
@@ -214,7 +219,7 @@ onAuthStateChanged(auth, async user => {
   currentUser = user;
 
   await setDoc(doc(db,"online",user.uid), {
-    name: name.value || "Utente",
+    name: nameInput.value || "Utente",
     time: serverTimestamp()
   });
 
@@ -238,7 +243,7 @@ onSnapshot(q, snap => {
   });
 });
 
-/* SEND (ANTI-SPAM) */
+/* SEND */
 window.send = async (where) => {
   const now = Date.now();
   if(now - lastMsgTime < 1000) return;
@@ -248,7 +253,7 @@ window.send = async (where) => {
   if(!input.value) return;
 
   await addDoc(collection(db,"chat"), {
-    user: name.value || "Utente",
+    user: nameInput.value || "Utente",
     text: input.value,
     time: serverTimestamp()
   });
