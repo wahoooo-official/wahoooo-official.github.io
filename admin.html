@@ -4,21 +4,21 @@
 <meta charset="UTF-8">
 <title>Wahoooo!™ - Chat doppiatori</title>
 
-   <!-- Favicon -->
-  <link rel="icon" href="favicon/favicon.ico">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+<!-- Favicon -->
+<link rel="icon" href="favicon/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
 <style>
- body {
-      font-family: "Trebuchet MS", sans-serif;
-      background: url("Sfondo.svg") no-repeat center center fixed;
-      background-size: cover;
-      margin: 0;
-      padding: 0;
-    }
-  
+body {
+  font-family: "Trebuchet MS", sans-serif;
+  background: url("Sfondo.svg") no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+}
+
 .section {
   display: none;
   max-width: 420px;
@@ -33,12 +33,19 @@
 
 h1 { color: #ff9f00; }
 
-input {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+.assistenza {
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.assistenza a {
+  color: #ff9f00;
+  text-decoration: none;
+}
+
+.assistenza a:hover {
+  text-decoration: underline;
 }
 
 button {
@@ -51,6 +58,20 @@ button {
   font-size: 16px;
   cursor: pointer;
   margin-top: 6px;
+}
+
+#foglio {
+  display: none;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+#foglio iframe {
+  width: 100%;
+  height: 220px;
+  border: none;
 }
 
 #chat-box {
@@ -101,7 +122,21 @@ button {
 
 <!-- CHAT -->
 <div id="chat" class="section">
+
+  <!-- NUOVO -->
+  <div class="assistenza">
+    Per assistenza inviare un’email a
+    <a href="mailto:wahoooofficial@gmail.com">wahoooofficial@gmail.com</a>
+  </div>
+
   <h1>Chat doppiatori</h1>
+
+  <!-- NUOVO -->
+  <button onclick="toggleFoglio()">📄 Mostra elenco doppiatori</button>
+
+  <div id="foglio">
+    <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSGKiHRceif9TPzCotNJU-Gt8-gWDn9PoyBiWOplfjbtMXkayJ6hErOSpZJ9YWRMhipLZXS5LXEuZs0/pubhtml?gid=0&single=true&widget=true&headers=false"></iframe>
+  </div>
 
   <div id="online">🟢 Online: 0</div>
 
@@ -130,14 +165,11 @@ import {
   getDatabase, ref, set, onValue, onDisconnect
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-/* 🔑 ADMIN UID */
 const ADMIN_UIDS = [
-
   "p9Q61Kgbx4evgO7gmsVpnKR4z3x1",
   "TqnXdlhfYKhAXVZV9iYT5BnUtQG2"
 ];
 
-/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyBHNaMmfMGm-7JQLLagfImQ9L_itv7MBXg",
   authDomain: "wahoooo-adminpannel.firebaseapp.com",
@@ -156,6 +188,12 @@ const chatBox = document.getElementById("chat-box");
 const onlineDiv = document.getElementById("online");
 
 let currentName = "";
+
+/* TOGGLE FOGLIO */
+window.toggleFoglio = () => {
+  const f = document.getElementById("foglio");
+  f.style.display = f.style.display === "none" ? "block" : "none";
+};
 
 /* LOGIN */
 window.access = async () => {
@@ -209,7 +247,6 @@ const q = query(collection(db, "chat"), orderBy("time"));
 
 onSnapshot(q, snap => {
   chatBox.innerHTML = "";
-
   snap.forEach(d => {
     const m = d.data();
     const isAdminMsg = ADMIN_UIDS.includes(m.uid);
@@ -226,7 +263,6 @@ onSnapshot(q, snap => {
       </div>
     `;
   });
-
   chatBox.scrollTop = chatBox.scrollHeight;
 });
 
@@ -245,8 +281,8 @@ window.sendMessage = async () => {
   document.getElementById("message").value = "";
 };
 
-/* DELETE (solo admin, regole lo proteggono) */
-window.deleteMsg = async (id) => {
+/* DELETE */
+window.deleteMsg = async id => {
   if (!confirm("Eliminare il messaggio?")) return;
   await deleteDoc(doc(db, "chat", id));
 };
