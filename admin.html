@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Wahoooo!™ - Chat doppiatori</title>
+
+<style>
+body {
+  font-family: "Trebuchet MS", sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+}
+
+.section {
+  display: none;
+  max-width: 420px;
+  margin: 120px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+.section.active { display: block; }
+
+h1 { color: #ff9f00; }
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #ff9f00;
+  color: white;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+
+#chat-box {
+  height: 260px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+.msg {
+  margin-bottom: 6px;
+  position: relative;
+}
+
+.msg strong { color: #ff9f00; }
+
+.admin {
+  color: red;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+.delete-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="auth" class="section active">
+  <h1>Accedi / Registrati</h1>
+  <input id="name" placeholder="Nome utente">
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="access()">Accedi / Registrati</button>
+</div>
+
+<!-- CHAT -->
+<div id="chat" class="section">
+  <h1>Chat doppiatori</h1>
+
+  <div id="online">🟢 Online: 0</div>
+
+  <div id="chat-box"></div>
+
+  <input id="message" placeholder="Scrivi un messaggio">
+  <button onclick="sendMessage()">Invia</button>
+  <button onclick="logout()">Esci</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged, signOut
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+import {
+  getFirestore, doc, setDoc, getDoc,
+  collection, addDoc, deleteDoc,
+  query, orderBy, onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+import {
+  getDatabase, ref, set, onValue, onDisconnect
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+/* 🔑 ADMIN UID */
+const ADMIN_UIDS = [
+
+  "p9Q61Kgbx4evgO7gmsVpnKR4z3x1",
+  "TqnXdlhfYKhAXVZV9iYT5BnUtQG2"
+];
+
+/* FIREBASE */
+const firebaseConfig = {
+  apiKey: "AIzaSyBHNaMmfMGm-7JQLLagfImQ9L_itv7MBXg",
+  authDomain: "wahoooo-adminpannel.firebaseapp.com",
+  projectId: "wahoooo-adminpannel",
+  databaseURL: "https://wahoooo-adminpannel-default-rtdb.firebaseio.com"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const rtdb = getDatabase(app);
+
+const authDiv = document.getElementById("auth");
+const chatDiv = document.getElementById("chat");
+const chatBox = document.getElementById("chat-box");
+const onlineDiv = document.getElementById("online");
+
+let currentName = "";
+
+/* LOGIN */
+window.access = async () => {
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!name || !email || !password) return alert("Compila tutto");
+
+  let user;
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    user = cred.user;
+  } catch (e) {
+    if (e.code === "auth/email-already-in-use") {
+      const cred = await signInWithEmailAndPassword(auth, email, password);
+      user = cred.user;
+    } else return alert(e.message);
+  }
+
+  await setDoc(doc(db, "users", user.uid), { name }, { merge: true });
+};
+
+/* AUTH */
+onAuthStateChanged(auth, async user => {
+  if (!user) {
+    authDiv.classList.add("active");
+    chatDiv.classList.remove("active");
+    return;
+  }
+
+  authDiv.classList.remove("active");
+  chatDiv.classList.add("active");
+
+  const snap = await getDoc(doc(db, "users", user.uid));
+  currentName = snap.data()?.name || "Utente";
+
+  const userRef = ref(rtdb, "online/" + user.uid);
+  set(userRef, true);
+  onDisconnect(userRef).remove();
+});
+
+/* ONLINE COUNT */
+onValue(ref(rtdb, "online"), snap => {
+  const count = snap.exists() ? Object.keys(snap.val()).length : 0;
+  onlineDiv.textContent = "🟢 Online: " + count;
+});
+
+/* CHAT */
+const q = query(collection(db, "chat"), orderBy("time"));
+
+onSnapshot(q, snap => {
+  chatBox.innerHTML = "";
+
+  snap.forEach(d => {
+    const m = d.data();
+    const isAdminMsg = ADMIN_UIDS.includes(m.uid);
+    const isAdminUser = auth.currentUser && ADMIN_UIDS.includes(auth.currentUser.uid);
+
+    chatBox.innerHTML += `
+      <div class="msg">
+        <strong>
+          ${m.user}
+          ${isAdminMsg ? '<span class="admin"> 🦔 ADMIN</span>' : ''}
+        </strong>
+        ${m.text}
+        ${isAdminUser ? `<button class="delete-btn" onclick="deleteMsg('${d.id}')">❌</button>` : ''}
+      </div>
+    `;
+  });
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+});
+
+/* SEND */
+window.sendMessage = async () => {
+  const text = document.getElementById("message").value;
+  if (!text) return;
+
+  await addDoc(collection(db, "chat"), {
+    user: currentName,
+    uid: auth.currentUser.uid,
+    text,
+    time: serverTimestamp()
+  });
+
+  document.getElementById("message").value = "";
+};
+
+/* DELETE (solo admin, regole lo proteggono) */
+window.deleteMsg = async (id) => {
+  if (!confirm("Eliminare il messaggio?")) return;
+  await deleteDoc(doc(db, "chat", id));
+};
+
+/* LOGOUT */
+window.logout = async () => {
+  if (auth.currentUser) {
+    await set(ref(rtdb, "online/" + auth.currentUser.uid), null);
+  }
+  signOut(auth);
+};
+</script>
+
+</body>
+</html>
