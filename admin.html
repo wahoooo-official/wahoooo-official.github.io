@@ -3,7 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <title>Wahoooo!™ - Chat doppiatori</title>
-
+  
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+  <script>
+    window.OneSignal = window.OneSignal || [];
+    OneSignal.push(function() {
+      OneSignal.init({
+        appId: "e4582d82-484e-46ea-b3a3-73e5b4f8885f",
+        language: "it",
+        promptOptions: {
+          slidedown: {
+            prompts: [
+              {
+                type: "push",
+                autoPrompt: true,
+                text: {
+                  actionMessage: "Attiva le notifiche per ricevere le ultime notizie e aggiornamenti.",
+                  acceptButton: "Iscriviti",
+                  cancelButton: "Più tardi"
+                }
+              }
+            ]
+          }
+        }
+      });
+    });
+  </script>
 <!-- Favicon -->
 <link rel="icon" href="favicon/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
