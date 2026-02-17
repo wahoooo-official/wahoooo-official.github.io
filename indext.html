@@ -104,6 +104,19 @@
       header { font-size: 20px; }
       .link-box { font-size: 16px; }
     }
+
+    footer.site-footer{
+	position:fixed;
+	left:0;
+	right:0;
+	bottom:0;
+	background:rgba(255,255,255,0.85);
+	text-align:center;
+	padding:10px 12px;
+	color:#333;
+	font-size:14px;
+	backdrop-filter: blur(6px);
+}
   </style>
 </head>
 
@@ -171,6 +184,13 @@
     Doggie and Friends. Così iniziò la storia di un piccolo studio nato su Scratch.
   </div>
 
+    <h2>Gli strumenti della Wahoooo!™</h2>
+  <div class="link-box">
+    Noi usiamo <a href="https://scratch.mit.edu/projects/editor/?tutorial=getStarted" target="_blank">Scratch</a> per creare giochi e serie. Quindi prova ad creare su https://scratch.mit.edu/projects/editor/?tutorial=getStarted e condividi i tuoi progetti con noi! Per inviare crea il progetto, pubblicalo e poi condividi il link del progetto con noi su <a href="https://scratch.mit.edu/discuss/topic/822881/" target="_blank">forum ufficiale</a>! Anche scaricare il progetto e condividerlo al <a href="mailto:wahooooofficial@gmail.com" target="_blank">nostro indirizzo email</a> è un'ottima idea, soprattutto se non hai un account Scratch!
+  </div>
+
+  
+
 </div>
 
 <!-- 📰 SCRIPT NOTIZIE (Google Sheets) -->
@@ -208,15 +228,15 @@
       `;
       container.appendChild(box);
     })
-    .catch(() => {
-      document.getElementById("news").innerHTML =
-        "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
-    });
-  
+      .catch(() => {
+        document.getElementById("news").innerHTML =
+          "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
+      });
+  </script>
+
   <footer class="site-footer">
-© 2026 Wahoooo! — Tutti i diritti riservati
-</footer>
-  
-</script>
+    © 2026 Wahoooo! — Tutti i diritti riservati
+  </footer>
+
 </body>
 </html>
