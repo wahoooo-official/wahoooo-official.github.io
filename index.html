@@ -1,3 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+
+  <!-- 🔔 OneSignal -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "301c63d6-4953-4b15-9c60-8b20114bad35",
+      });
+    });
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wahoooo!™ - Sito Ufficiale</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+
+  <style>
+    /* ✅ Fix globale overflow mobile */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
+    body {
+      font-family: "Trebuchet MS", sans-serif;
+      background: url("Sfondo.svg") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #ff9f00;
       color: white;
       text-align: center;
       padding: 40px 10px;
@@ -41,6 +87,25 @@
       text-decoration: underline;
     }
 
+    /* ✅ Iframe Scratch responsive */
+    .scratch-embed {
+      position: relative;
+      width: 100%;
+      max-width: 485px;
+      padding-bottom: min(83%, 402px);
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .scratch-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
     @media (max-width: 768px) {
       header { font-size: 24px; padding: 25px 10px; }
       .container { margin: 10px; padding: 15px; }
@@ -53,18 +118,18 @@
       .link-box { font-size: 16px; }
     }
 
-    footer.site-footer{
-	position:fixed;
-	left:0;
-	right:0;
-	bottom:0;
-	background:rgba(255,255,255,0.85);
-	text-align:center;
-	padding:10px 12px;
-	color:#333;
-	font-size:14px;
-	backdrop-filter: blur(6px);
-}
+    footer.site-footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.85);
+      text-align: center;
+      padding: 10px 12px;
+      color: #333;
+      font-size: 14px;
+      backdrop-filter: blur(6px);
+    }
   </style>
 </head>
 
@@ -89,33 +154,41 @@
     </a>
   </div>
 
-    <div class="link-box">
+  <div class="link-box">
     🔗 <a href="https://whatsapp.com/channel/0029Vb7KJrX8fewqaxUzqT0l" target="_blank">
       Visita il canale whatsapp per vedere gli episodi dal telefono o tablet!
     </a>
   </div>
 
   <h2>Progetti in primo piano</h2>
-<iframe src="https://scratch.mit.edu/projects/1263551206/embed" allowtransparency="true" width="485" height="402" frameborder="0" scrolling="no" allowfullscreen></iframe>
-	
+  <!-- ✅ Iframe responsive -->
+  <div class="scratch-embed">
+    <iframe src="https://scratch.mit.edu/projects/1263551206/embed"
+      allowtransparency="true"
+      frameborder="0"
+      scrolling="no"
+      allowfullscreen></iframe>
+  </div>
+
   <h2>📰 Notizie</h2>
   <div id="news">
     <div class="link-box">Caricamento notizia…</div>
   </div>
 
   <h2>Team Wahoooo!™</h2>
- <div class="link-box">Emotional – <a href="https://scratch.mit.edu/users/An_Emotional_Studio/" target="_blank">Profilo</a></div> 
-<div class="link-box">Leototaltube_14 – <a href="https://scratch.mit.edu/users/Leototaltube_14/" target="_blank">Profilo</a></div> 
-<div class="link-box">Gretuzza – Doppiatrice (senza profilo)</div>
-<div class="link-box">Gab-rix-14 – Doppiatore - <a href="https://scratch.mit.edu/users/gab-rix-14/" target="_blank">Profilo</a></div>
-<div class="link-box">SuperMartino11 – <a href="https://scratch.mit.edu/users/supermartino11/" target="_blank">Profilo</a></div>
-<div class="link-box">paparello14 – <a href="https://scratch.mit.edu/users/paparello14/" target="_blank">Profilo</a></div>
-<div class="link-box">Ciaone12 – <a href="https://scratch.mit.edu/users/ciaone12/" target="_blank">Profilo</a></div>
-<div class="link-box">pitchproductions – <a href="https://scratch.mit.edu/users/pitchproductions/" target="_blank">Profilo</a></div>
-<div class="link-box">der400 – <a href="https://scratch.mit.edu/users/der400/" target="_blank">Profilo</a></div>
-<div class="link-box">1Gatto1 – <a href="https://scratch.mit.edu/users/1Gatto1/" target="_blank">Profilo</a></div>
-<div class="link-box">D-Z- – <a href="https://scratch.mit.edu/users/D-Z-/" target="_blank">Profilo</a></div>
-<div class="link-box">SaccoVuoto2014 – <a href="https://scratch.mit.edu/users/SaccoVuoto2014/" target="_blank">Profilo</a></div>
+  <div class="link-box">Emotional – <a href="https://scratch.mit.edu/users/An_Emotional_Studio/" target="_blank">Profilo</a></div>
+  <div class="link-box">Leototaltube_14 – <a href="https://scratch.mit.edu/users/Leototaltube_14/" target="_blank">Profilo</a></div>
+  <div class="link-box">Gretuzza – Doppiatrice (senza profilo)</div>
+  <!-- ✅ Fix typo hhttps → https -->
+  <div class="link-box">Gab-rix-14 – Doppiatore - <a href="https://scratch.mit.edu/users/gab-rix-14/" target="_blank">Profilo</a></div>
+  <div class="link-box">SuperMartino11 – <a href="https://scratch.mit.edu/users/supermartino11/" target="_blank">Profilo</a></div>
+  <div class="link-box">paparello14 – <a href="https://scratch.mit.edu/users/paparello14/" target="_blank">Profilo</a></div>
+  <div class="link-box">Ciaone12 – <a href="https://scratch.mit.edu/users/ciaone12/" target="_blank">Profilo</a></div>
+  <div class="link-box">pitchproductions – <a href="https://scratch.mit.edu/users/pitchproductions/" target="_blank">Profilo</a></div>
+  <div class="link-box">der400 – <a href="https://scratch.mit.edu/users/der400/" target="_blank">Profilo</a></div>
+  <div class="link-box">1Gatto1 – <a href="https://scratch.mit.edu/users/1Gatto1/" target="_blank">Profilo</a></div>
+  <div class="link-box">D-Z- – <a href="https://scratch.mit.edu/users/D-Z-/" target="_blank">Profilo</a></div>
+  <div class="link-box">SaccoVuoto2014 – <a href="https://scratch.mit.edu/users/SaccoVuoto2014/" target="_blank">Profilo</a></div>
 
   <h2>Storia della Wahoooo!™</h2>
   <div class="link-box">
@@ -124,12 +197,10 @@
     Doggie and Friends. Così iniziò la storia di un piccolo studio nato su Scratch.
   </div>
 
-    <h2>Gli strumenti della Wahoooo!™</h2>
+  <h2>Gli strumenti della Wahoooo!™</h2>
   <div class="link-box">
-    Noi usiamo <a href="https://scratch.mit.edu/projects/editor/?tutorial=getStarted" target="_blank">Scratch</a> per creare giochi e serie. Quindi prova ad creare su https://scratch.mit.edu/projects/editor/?tutorial=getStarted e condividi i tuoi progetti con noi! Per inviare crea il progetto, pubblicalo e poi condividi il link del progetto con noi su <a href="https://scratch.mit.edu/discuss/topic/822881/" target="_blank">forum ufficiale</a>! Anche scaricare il progetto e condividerlo al <a href="mailto:wahooooofficial@gmail.com" target="_blank">nostro indirizzo email</a> è un'ottima idea, soprattutto se non hai un account Scratch!
+    Noi usiamo <a href="https://scratch.mit.edu/projects/editor/?tutorial=getStarted" target="_blank">Scratch</a> per creare giochi e serie. Quindi prova ad creare su https://scratch.mit.edu/projects/editor/?tutorial=getStarted e condividi i tuoi progetti con noi! Per inviare crea il progetto, pubblicalo e poi condividi il link del progetto con noi su <a href="https://scratch.mit.edu/discuss/topic/822881/" target="_blank">forum ufficiale</a>! Anche scaricare il progetto e condividerlo al <a href="mailto:wahooooofficial@gmail.com">nostro indirizzo email</a> è un'ottima idea, soprattutto se non hai un account Scratch!
   </div>
-
-  
 
 </div>
 
@@ -147,14 +218,11 @@
       container.innerHTML = "";
 
       if (!rows || rows.length === 0) {
-        container.innerHTML =
-          "<div class='link-box'>Nessuna notizia disponibile.</div>";
+        container.innerHTML = "<div class='link-box'>Nessuna notizia disponibile.</div>";
         return;
       }
 
-      // ✅ RIGA 2 → A2, B2, C2
       const row = rows[0];
-
       const titolo = row.c[0]?.v || "";
       const data   = row.c[1]?.v || "";
       const testo  = row.c[2]?.v || "";
@@ -168,15 +236,15 @@
       `;
       container.appendChild(box);
     })
-      .catch(() => {
-        document.getElementById("news").innerHTML =
-          "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
-      });
-  </script>
+    .catch(() => {
+      document.getElementById("news").innerHTML =
+        "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
+    });
+</script>
 
-  <footer class="site-footer">
-    © 2026 Wahoooo! — Tutti i diritti riservati
-  </footer>
+<footer class="site-footer">
+  © 2026 Wahoooo! — Tutti i diritti riservati
+</footer>
 
 </body>
 </html>
