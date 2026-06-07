@@ -162,13 +162,16 @@
 
   <h2>Progetti in primo piano</h2>
   <!-- ✅ Iframe responsive -->
-  <div class="scratch-embed">
-    <iframe src="https://scratch.mit.edu/projects/1263551206/embed"
-      allowtransparency="true"
-      frameborder="0"
-      scrolling="no"
-      allowfullscreen></iframe>
-  </div>
+<div class="scratch-embed">
+  <iframe
+    id="featured-project"
+    src=""
+    allowtransparency="true"
+    frameborder="0"
+    scrolling="no"
+    allowfullscreen>
+  </iframe>
+</div>
 
   <h2>📰 Notizie</h2>
   <div id="news">
@@ -214,29 +217,49 @@
     .then(text => {
       const json = JSON.parse(text.substring(47).slice(0, -2));
       const rows = json.table.rows;
-      const container = document.getElementById("news");
-      container.innerHTML = "";
+
+      const newsContainer = document.getElementById("news");
 
       if (!rows || rows.length === 0) {
-        container.innerHTML = "<div class='link-box'>Nessuna notizia disponibile.</div>";
+        newsContainer.innerHTML =
+          "<div class='link-box'>Nessuna notizia disponibile.</div>";
         return;
       }
 
-      const row = rows[0];
-      const titolo = row.c[0]?.v || "";
-      const data   = row.c[1]?.v || "";
-      const testo  = row.c[2]?.v || "";
+      // Riga 2 del foglio (indice 1)
+      const row = rows[1] || rows[0];
 
-      const box = document.createElement("div");
-      box.className = "link-box";
-      box.innerHTML = `
-        <strong>${titolo}</strong><br>
-        <small>${data}</small><br><br>
-        ${testo}
+      const titolo = row.c[0]?.v || "";
+      const data = row.c[1]?.v || "";
+      const testo = row.c[2]?.v || "";
+      const projectUrl = row.c[3]?.v || "";
+
+      // Aggiorna notizia
+      newsContainer.innerHTML = `
+        <div class="link-box">
+          <strong>${titolo}</strong><br>
+          <small>${data}</small><br><br>
+          ${testo}
+        </div>
       `;
-      container.appendChild(box);
+
+      // Aggiorna progetto in primo piano
+      if (projectUrl) {
+        const iframe = document.getElementById("featured-project");
+
+        const match = projectUrl.match(/projects\/(\d+)/);
+
+        if (match) {
+          iframe.src =
+            `https://scratch.mit.edu/projects/${match[1]}/embed`;
+        } else {
+          iframe.src = projectUrl;
+        }
+      }
     })
-    .catch(() => {
+    .catch(error => {
+      console.error(error);
+
       document.getElementById("news").innerHTML =
         "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
     });
