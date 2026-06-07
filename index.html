@@ -219,22 +219,24 @@
       const rows = json.table.rows;
 
       const newsContainer = document.getElementById("news");
+      const iframe = document.getElementById("featured-project");
 
-      if (!rows || rows.length === 0) {
+      // Riga 2 del foglio (indice 1)
+      const row = rows[1];
+
+      if (!row) {
         newsContainer.innerHTML =
           "<div class='link-box'>Nessuna notizia disponibile.</div>";
         return;
       }
 
-      // Riga 2 del foglio (indice 1)
-      const row = rows[1] || rows[0];
-
+      // Celle A2, B2, C2, D2
       const titolo = row.c[0]?.v || "";
       const data = row.c[1]?.v || "";
       const testo = row.c[2]?.v || "";
       const projectUrl = row.c[3]?.v || "";
 
-      // Aggiorna notizia
+      // Mostra la notizia
       newsContainer.innerHTML = `
         <div class="link-box">
           <strong>${titolo}</strong><br>
@@ -243,15 +245,12 @@
         </div>
       `;
 
-      // Aggiorna progetto in primo piano
+      // Imposta il progetto in primo piano
       if (projectUrl) {
-        const iframe = document.getElementById("featured-project");
-
         const match = projectUrl.match(/projects\/(\d+)/);
 
         if (match) {
-          iframe.src =
-            `https://scratch.mit.edu/projects/${match[1]}/embed`;
+          iframe.src = `https://scratch.mit.edu/projects/${match[1]}/embed`;
         } else {
           iframe.src = projectUrl;
         }
