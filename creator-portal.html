@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Area Creatori Wahoooo!™</title>
+  <style>
+    /* ✅ Fix globale overflow mobile */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+
+    body {
+      font-family: "Trebuchet MS", sans-serif;
+      background: #faf8f5 url("Sfondo.svg") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #ff9f00;
+      color: white;
+      text-align: center;
+      padding: 40px 10px;
+      font-size: 32px;
+      font-weight: bold;
+      border-bottom: 5px solid #e08600;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #ff9f00;
+      font-size: 26px;
+      border-left: 8px solid #ff9f00;
+      padding-left: 10px;
+      margin-top: 10px;
+    }
+
+    .link-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 10px 0;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.05);
+      font-size: 20px;
+    }
+
+    a {
+      color: #0077ff;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* ✅ Iframe Scratch responsive */
+    .scratch-embed {
+      position: relative;
+      width: 100%;
+      max-width: 485px;
+      padding-bottom: min(83%, 402px);
+      overflow: hidden;
+      margin: 10px 0;
+    }
+
+    .scratch-embed iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    /* ✅ Stili specifici per il form d'invio */
+    .wahoooo-form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group label {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="email"] {
+      padding: 12px;
+      font-size: 16px;
+      font-family: inherit;
+      border: 2px solid #ff9f00;
+      border-radius: 8px;
+      outline: none;
+      width: 100%;
+    }
+
+    .form-group input[type="text"]:focus,
+    .form-group input[type="email"]:focus {
+      border-color: #e08600;
+      background-color: #fffdfa;
+    }
+
+    .form-group input[type="file"] {
+      font-size: 16px;
+      padding: 10px;
+      background: #fff8ee;
+      border: 2px dashed #ff9f00;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .submit-btn {
+      background-color: #ff9f00;
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      font-size: 18px;
+      font-weight: bold;
+      font-family: inherit;
+      border-radius: 8px;
+      cursor: pointer;
+      border-bottom: 5px solid #e08600;
+      transition: background 0.2s ease, transform 0.1s ease;
+      margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+      background-color: #e08600;
+    }
+
+    .submit-btn:active {
+      transform: translateY(2px);
+      border-bottom-width: 3px;
+    }
+
+    @media (max-width: 768px) {
+      header { font-size: 24px; padding: 25px 10px; }
+      .container { margin: 10px; padding: 15px; }
+      h2 { font-size: 22px; }
+      .link-box { font-size: 18px; }
+    }
+
+    @media (max-width: 480px) {
+      header { font-size: 20px; }
+      .link-box { font-size: 16px; }
+    }
+
+    footer.site-footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.85);
+      text-align: center;
+      padding: 10px 12px;
+      color: #333;
+      font-size: 14px;
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+    }
+    
+    .spacer {
+      height: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    Wahoooo!™ Portal
+  </header>
+
+  <div class="container">
+    <h2>Area Creatori Wahoooo!™ 🚀</h2>
+    
+    <div class="link-box">
+      <p style="margin-top: 0; font-size: 18px; color: #555; line-height: 1.5;">
+        Hai una nuova serie da pubblicare? Inviaci il file <strong>.sb3</strong> di Scratch per inviarlo direttamente a <a href="mailto:wahoooofficial@gmail.com">wahoooofficial@gmail.com</a> in un click!
+      </p>
+      
+      <form action="https://formspree.io/f/xaqgwwdn" method="POST" enctype="multipart/form-data" class="wahoooo-form">
+        
+        <input type="hidden" name="_subject" value="Nuovo Progetto Scratch inviato da Wahoooo!™">
+        
+        <div class="form-group">
+          <label for="username">Il tuo Nome su Scratch:</label>
+          <input type="text" id="username" name="nickname" placeholder="Es. SuperScratcher" required>
+        </div>
+
+        <div class="form-group">
+          <label for="useremail">La tua Email:</label>
+          <input type="email" id="useremail" name="email" placeholder="nome@esempio.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="scratch-file">Seleziona il tuo file Scratch (.sb3):</label>
+          <input type="file" id="scratch-file" name="progetto_scratch" accept=".sb3" required>
+        </div>
+
+        <button type="submit" class="submit-btn">Invia Progetto! Wahoooo! 🎉</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <footer class="site-footer">
+    &copy; 2026 Wahoooo!™ - Tutti i diritti riservati.
+  </footer>
+
+</body>
+</html>
