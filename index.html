@@ -296,6 +296,23 @@ if (Hls.isSupported()) {
         "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
     });
 </script>
+  
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<script>
+const video = document.getElementById('player');
+
+// 🔴 METTI QUI IL TUO URL REALE
+const streamURL = "https://gio-expertbook.tail23cc3a.ts.net/live/mystream/";
+
+if (Hls.isSupported()) {
+  const hls = new Hls();
+  hls.loadSource(streamURL);
+  hls.attachMedia(video);
+} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+  video.src = streamURL;
+}
+</script>
 
 <footer class="site-footer">
   © 2026 Wahoooo! — Tutti i diritti riservati
