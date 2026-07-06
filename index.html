@@ -2,7 +2,6 @@
 <html lang="it">
 <head>
 
-  <!-- 🔔 OneSignal -->
   <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
   <script>
     window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -17,7 +16,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wahoooo!™ - Sito Ufficiale</title>
 
-  <!-- Favicon -->
   <link rel="icon" href="favicon/favicon.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
@@ -87,17 +85,26 @@
       text-decoration: underline;
     }
 
-    /* ✅ Iframe Scratch responsive */
-    .scratch-embed {
+    /* ✅ Iframe Scratch e Restream responsive */
+    .scratch-embed, .live-embed {
       position: relative;
       width: 100%;
-      max-width: 485px;
-      padding-bottom: min(83%, 402px);
+      max-width: 100%;
       overflow: hidden;
       margin: 10px 0;
+      border-radius: 8px;
     }
 
-    .scratch-embed iframe {
+    .scratch-embed {
+      max-width: 485px;
+      padding-bottom: min(83%, 402px);
+    }
+
+    .live-embed {
+      padding-bottom: 56.25%; /* Aspect ratio 16:9 standard per le dirette */
+    }
+
+    .scratch-embed iframe, .live-embed iframe {
       position: absolute;
       top: 0;
       left: 0;
@@ -129,6 +136,7 @@
       color: #333;
       font-size: 14px;
       backdrop-filter: blur(6px);
+      z-index: 1000;
     }
   </style>
 </head>
@@ -161,17 +169,26 @@
   </div>
 
   <h2>Progetti in primo piano</h2>
-  <!-- ✅ Iframe responsive -->
-<div class="scratch-embed">
-  <iframe
-    id="featured-project"
-    src=""
-    allowtransparency="true"
-    frameborder="0"
-    scrolling="no"
-    allowfullscreen>
-  </iframe>
-</div>
+  <div class="scratch-embed">
+    <iframe
+      id="featured-project"
+      src=""
+      allowtransparency="true"
+      frameborder="0"
+      scrolling="no"
+      allowfullscreen>
+     iframe>
+  </div>
+
+  <h2>Wahoooo! Live Stream (Beta)</h2>
+  <div class="live-embed">
+    <iframe 
+      src="https://player.restream.io/?token=61861f0f-e41f-44ce-bb19-360f75ef677e" 
+      allowfullscreen 
+      scrolling="no" 
+      allow="autoplay; encrypted-media">
+    </iframe>
+  </div>
 
   <h2>📰 Notizie</h2>
   <div id="news">
@@ -182,7 +199,6 @@
   <div class="link-box">Emotional – <a href="https://scratch.mit.edu/users/An_Emotional_Studio/" target="_blank">Profilo</a></div>
   <div class="link-box">Leototaltube_14 – <a href="https://scratch.mit.edu/users/Leototaltube_14/" target="_blank">Profilo</a></div>
   <div class="link-box">Gretuzza – Doppiatrice (senza profilo)</div>
-  <!-- ✅ Fix typo hhttps → https -->
   <div class="link-box">Gab-rix-14 – Doppiatore - <a href="https://scratch.mit.edu/users/gab-rix-14/" target="_blank">Profilo</a></div>
   <div class="link-box">SuperMartino11 – <a href="https://scratch.mit.edu/users/supermartino11/" target="_blank">Profilo</a></div>
   <div class="link-box">paparello14 – <a href="https://scratch.mit.edu/users/paparello14/" target="_blank">Profilo</a></div>
@@ -212,10 +228,10 @@
   <h2>Sei un creatore che vuole pubblicare una serie sul canale Wahoooo!™?</h2>
   <div class="link-box">
     Puoi inviare gli episodi della tua serie nel <a href="https://wahoooo-official.github.io/creator-portal.html" target="_blank">Creator Portal</a>
+  </div>
 
 </div>
 
-<!-- 📰 SCRIPT NOTIZIE (Google Sheets) -->
 <script>
   const SHEET_ID = "1ocHbBi3wnbGLHheHxqLx-CNYgOaXeaR5OFH0zMEipAo";
   const sheetURL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
@@ -234,7 +250,6 @@
         return;
       }
 
-      // Riga 2 del foglio (indice 1)
       const row = rows[1] || rows[0];
 
       const titolo = row.c[0]?.v || "";
@@ -242,7 +257,6 @@
       const testo = row.c[2]?.v || "";
       const projectUrl = row.c[3]?.v || "";
 
-      // Aggiorna notizia
       newsContainer.innerHTML = `
         <div class="link-box">
           <strong>${titolo}</strong><br>
@@ -251,10 +265,8 @@
         </div>
       `;
 
-      // Aggiorna progetto in primo piano
       if (projectUrl) {
         const iframe = document.getElementById("featured-project");
-
         const match = projectUrl.match(/projects\/(\d+)/);
 
         if (match) {
@@ -267,7 +279,6 @@
     })
     .catch(error => {
       console.error(error);
-
       document.getElementById("news").innerHTML =
         "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
     });
