@@ -180,15 +180,28 @@
     </iframe>
   </div>
 
-  <h2>Wahoooo! Live Stream (Beta)</h2>
-  <div class="live-embed">
-    <iframe 
-      src="https://gio-expertbook.tail23cc3a.ts.net/live/mystream/" 
-      allowfullscreen 
-      scrolling="no" 
-      allow="autoplay; encrypted-media">
-    </iframe>
-  </div>
+    <h2>🎥 Live Stream (Beta)</h2>
+
+  <video id="player" controls autoplay></video>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<script>
+const video = document.getElementById('player');
+
+// 🔴 METTI QUI IL TUO URL REALE
+const streamURL = "https://gio-expertbook.tail23cc3a.ts.net/live/mystream/index.m3u8";
+
+if (Hls.isSupported()) {
+  const hls = new Hls();
+  hls.loadSource(streamURL);
+  hls.attachMedia(video);
+} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+  video.src = streamURL;
+}
+</script>
 
   <h2>📰 Notizie</h2>
   <div id="news">
