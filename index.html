@@ -22,16 +22,6 @@
   <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
   <style>
-    /* ✅ Fix globale overflow mobile */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      overflow-x: hidden;
-      max-width: 100%;
-    }
-
     body {
       font-family: "Trebuchet MS", sans-serif;
       background: url("Sfondo.svg") no-repeat center center fixed;
@@ -52,9 +42,9 @@
 
     .container {
       max-width: 900px;
-      margin: 20px auto;
+      margin: 20px auto 80px auto;
       padding: 20px;
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.92);
       border-radius: 12px;
     }
 
@@ -85,26 +75,23 @@
       text-decoration: underline;
     }
 
-    /* ✅ Iframe Scratch e Restream responsive */
-    .scratch-embed, .live-embed {
+    .muted {
+      color:#444;
+      font-size:16px;
+    }
+
+    /* Mantenuto: Iframe Scratch responsive */
+    .scratch-embed {
       position: relative;
       width: 100%;
-      max-width: 100%;
+      max-width: 485px;
+      padding-bottom: min(83%, 402px);
       overflow: hidden;
       margin: 10px 0;
       border-radius: 8px;
     }
 
-    .scratch-embed {
-      max-width: 485px;
-      padding-bottom: min(83%, 402px);
-    }
-
-    .live-embed {
-      padding-bottom: 56.25%; /* Aspect ratio 16:9 standard per le dirette */
-    }
-
-    .scratch-embed iframe, .live-embed iframe {
+    .scratch-embed iframe {
       position: absolute;
       top: 0;
       left: 0;
@@ -113,18 +100,21 @@
       border: 0;
     }
 
-    @media (max-width: 768px) {
-      header { font-size: 24px; padding: 25px 10px; }
-      .container { margin: 10px; padding: 15px; }
-      h2 { font-size: 22px; }
-      .link-box { font-size: 18px; }
+    /* VIDEO & LIVE STYLES */
+    .video-center {
+      text-align: center;
+      margin-top: 25px;
     }
 
-    @media (max-width: 480px) {
-      header { font-size: 20px; }
-      .link-box { font-size: 16px; }
+    .video-center video {
+      width: 100%;
+      max-width: 500px;
+      border-radius: 14px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      object-fit: cover;
     }
 
+    /* FOOTER */
     footer.site-footer {
       position: fixed;
       left: 0;
@@ -137,6 +127,50 @@
       font-size: 14px;
       backdrop-filter: blur(6px);
       z-index: 1000;
+    }
+
+    /* MOBILE OTTIMIZZAZIONE */
+    @media (max-width: 768px) {
+      header { 
+        font-size: 22px; 
+        padding: 25px 10px; 
+      }
+
+      .container { 
+        margin: 10px 10px 90px 10px; 
+        padding: 15px; 
+      }
+
+      h2 { 
+        font-size: 20px; 
+      }
+
+      .link-box { 
+        font-size: 16px; 
+      }
+
+      .video-center video {
+        max-width: 100%;
+        border-radius: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header { 
+        font-size: 18px; 
+      }
+
+      h2 { 
+        font-size: 18px; 
+      }
+
+      .link-box { 
+        font-size: 15px; 
+      }
+
+      .muted {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
@@ -180,28 +214,10 @@
     </iframe>
   </div>
 
-    <h2>🎥 Live Stream (Beta)</h2>
-
-  <video id="player" controls autoplay></video>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-<script>
-const video = document.getElementById('player');
-
-// 🔴 METTI QUI IL TUO URL REALE
-const streamURL = "https://gio-expertbook.tail23cc3a.ts.net/live/mystream/";
-
-if (Hls.isSupported()) {
-  const hls = new Hls();
-  hls.loadSource(streamURL);
-  hls.attachMedia(video);
-} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-  video.src = streamURL;
-}
-</script>
+  <h2>🎥 Live Stream (Beta)</h2>
+  <div class="video-center">
+    <video id="player" controls autoplay></video>
+  </div>
 
   <h2>📰 Notizie</h2>
   <div id="news">
@@ -225,7 +241,6 @@ if (Hls.isSupported()) {
   <div class="link-box">AH-boh- – <a href="https://scratch.mit.edu/users/ah-boh-/" target="_blank">Profilo</a></div>
   <div class="link-box">rebest1025 – <a href="https://scratch.mit.edu/users/rebest1025/" target="_blank">Profilo</a></div>
 
-
   <h2>Storia della Wahoooo!™</h2>
   <div class="link-box">
     Nel 31 Marzo del 2024, un ragazzo di nome Leonardo si iscrisse a Scratch sotto il nome di Leototaltube_14.
@@ -245,64 +260,11 @@ if (Hls.isSupported()) {
 
 </div>
 
-<script>
-  const SHEET_ID = "1ocHbBi3wnbGLHheHxqLx-CNYgOaXeaR5OFH0zMEipAo";
-  const sheetURL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-
-  fetch(sheetURL)
-    .then(res => res.text())
-    .then(text => {
-      const json = JSON.parse(text.substring(47).slice(0, -2));
-      const rows = json.table.rows;
-
-      const newsContainer = document.getElementById("news");
-
-      if (!rows || rows.length === 0) {
-        newsContainer.innerHTML =
-          "<div class='link-box'>Nessuna notizia disponibile.</div>";
-        return;
-      }
-
-      const row = rows[1] || rows[0];
-
-      const titolo = row.c[0]?.v || "";
-      const data = row.c[1]?.v || "";
-      const testo = row.c[2]?.v || "";
-      const projectUrl = row.c[3]?.v || "";
-
-      newsContainer.innerHTML = `
-        <div class="link-box">
-          <strong>${titolo}</strong><br>
-          <small>${data}</small><br><br>
-          ${testo}
-        </div>
-      `;
-
-      if (projectUrl) {
-        const iframe = document.getElementById("featured-project");
-        const match = projectUrl.match(/projects\/(\d+)/);
-
-        if (match) {
-          iframe.src =
-            `https://scratch.mit.edu/projects/${match[1]}/embed`;
-        } else {
-          iframe.src = projectUrl;
-        }
-      }
-    })
-    .catch(error => {
-      console.error(error);
-      document.getElementById("news").innerHTML =
-        "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
-    });
-</script>
-  
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <script>
+// Configurazione lettore Live Stream
 const video = document.getElementById('player');
-
-// 🔴 METTI QUI IL TUO URL REALE
 const streamURL = "https://gio-expertbook.tail23cc3a.ts.net/live/mystream/";
 
 if (Hls.isSupported()) {
@@ -312,6 +274,52 @@ if (Hls.isSupported()) {
 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
   video.src = streamURL;
 }
+
+// Integrazione Google Sheets per notizie e Progetto Scratch in primo piano
+const SHEET_ID = "1ocHbBi3wnbGLHheHxqLx-CNYgOaXeaR5OFH0zMEipAo";
+const sheetURL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+
+fetch(sheetURL)
+  .then(res => res.text())
+  .then(text => {
+    const json = JSON.parse(text.substring(47).slice(0, -2));
+    const rows = json.table.rows;
+    const newsContainer = document.getElementById("news");
+
+    if (!rows || rows.length === 0) {
+      newsContainer.innerHTML = "<div class='link-box'>Nessuna notizia disponibile.</div>";
+      return;
+    }
+
+    const row = rows[1] || rows[0];
+    const titolo = row.c[0]?.v || "";
+    const data = row.c[1]?.v || "";
+    const testo = row.c[2]?.v || "";
+    const projectUrl = row.c[3]?.v || "";
+
+    newsContainer.innerHTML = `
+      <div class="link-box">
+        <strong>${titolo}</strong><br>
+        <small>${data}</small><br><br>
+        ${testo}
+      </div>
+    `;
+
+    if (projectUrl) {
+      const iframe = document.getElementById("featured-project");
+      const match = projectUrl.match(/projects\/(\d+)/);
+
+      if (match) {
+        iframe.src = `https://scratch.mit.edu/projects/${match[1]}/embed`;
+      } else {
+        iframe.src = projectUrl;
+      }
+    }
+  })
+  .catch(error => {
+    console.error(error);
+    document.getElementById("news").innerHTML = "<div class='link-box'>Errore nel caricamento delle notizie.</div>";
+  });
 </script>
 
 <footer class="site-footer">
@@ -320,3 +328,4 @@ if (Hls.isSupported()) {
 
 </body>
 </html>
+
